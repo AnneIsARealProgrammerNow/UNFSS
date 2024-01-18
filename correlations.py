@@ -39,7 +39,7 @@ countries =  pd.read_csv(countries_table, encoding = 'utf-8')
 food  = pd.read_excel(food_index_table)
 gdp = pd.read_csv(gdp_table, encoding = 'utf-8')
 
-df = df_in.merge(topics[['topic_name', 'topic_category']], left_on = 'topic_nr', right_index = True)
+df = df_in.merge(topics[['topic_name', 'topic_category', 'topic_nr']], on = 'topic_nr')
 
 # Before we add the country names, ensure they use the same country names
 # (this is why we should use ISO codes, but oh well...)
@@ -134,7 +134,7 @@ def plot_by_region(fig, ax, score, valueVars, dfs, regression = False, order=1,
         for value, c in zip(valueVars, customPalette):
             sns.regplot(data=meltDf.loc[meltDf['variable'] == value],
                 x=score, y="value", # hue="variable", 
-                scatter=False, ci=False, order=order,
+                scatter=False, ci=0.9, order=order,
                  #markers=["o", "X", "s", "D", "v", "P"],
                 ax=ax,
                 line_kws = {'color':c, 'alpha' :0.85,
@@ -200,23 +200,6 @@ def plot_by_region(fig, ax, score, valueVars, dfs, regression = False, order=1,
     
     return(fig, ax)
 
-def r_p_values(df, correlation = 'spearman'):
-    df = df.dropna()._get_numeric_data()
-    dfcols = pd.DataFrame(columns=df.columns)
-    correlates = dfcols.transpose().join(dfcols, how='outer')
-    pvalues = dfcols.transpose().join(dfcols, how='outer')
-    for r in df.columns:
-        for c in df.columns:
-            if correlation == 'spearman':
-                correlates[r][c] = spearmanr(df[r], df[c], nan_policy = 'omit')[0]
-                pvalues[r][c] = spearmanr(df[r], df[c], nan_policy = 'omit')[1] 
-            elif correlation  == 'pearson':
-                correlates[r][c] = pearsonr(df[r], df[c], nan_policy = 'omit')[0]
-                pvalues[r][c] = pearsonr(df[r], df[c], nan_policy = 'omit')[1] 
-    return(correlates, pvalues)
-
-
-
 #%% Calculate the "scores": nr of paragraphs per topic category for each country
 
 scores_dict = {}
@@ -244,7 +227,7 @@ scores_df.rename(columns = {'Food insecurity & Food system resilience': 'Food in
 
 valueVars = ['Food insecurity', 
              #'Agriculture',
-             #'UNFSS & Governance', 
+             #'General & Governance', 
              'Climate & Environment',
              'Health & social issues', 
              #'Other sectors',
@@ -350,7 +333,7 @@ plt.show()
 
 valueVars = ['Food insecurity', 
              'Agriculture',
-             'UNFSS & Governance', 
+             'General & Governance', 
              'Climate & Environment',
              'Health & social issues', 
              'Other sectors',
@@ -425,6 +408,7 @@ plt.show()
     
 
 #%% Stats
-corDf_spearman, corDf_sP = r_p_values(share_df)
-corDf_pearson, corDf_pP = r_p_values(share_df)
+
+pearson = share_df.corr()
+pvalues = share_df.corr(method=lambda x, y: pearsonr(x, y)[1])
 

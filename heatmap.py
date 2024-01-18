@@ -27,7 +27,7 @@ df_in = pd.read_csv(input_df, index_col = 0, encoding = 'utf-8')
 topics = pd.read_excel (topic_excel)
 countries =  pd.read_csv(countries_table, encoding = 'utf-8')
 
-df = df_in.merge(topics[['topic_name', 'topic_category']], left_on = 'topic_nr', right_index = True)
+df = df_in.merge(topics[['topic_name', 'topic_category', 'topic_nr']], on = 'topic_nr')
 
 #%% Also, add the country info
 #First, check if we have matching names in the country table
@@ -146,15 +146,15 @@ fig, ax = plot_heatmap(df, 'country', 'topic_name',
 
 fig, ax = plt.subplots(1,1, figsize = (14, 28), dpi=200)
 fig, ax = plot_heatmap(df, 'topic_name', 'country',
-                       x_sort = 'topic_category', 
+                       x_sort = ['topic_category', 'topic_name'],
                        y_sort = ['World Bank Region', 'country'],
                        fig = fig, ax = ax,
                        col_normalise= False,
                        title = "Heatmap All - No Normalisation")
 #Lets add some black bars around the groups
-for x in [9, 16, 25, 36, 37, 39]:
+for x in [9, 16, 25, 38, 48, 49]:
     plt.axvline(x, lw = 2, c = 'k')
-for y in [24, 51, 79, 81, 86]:
+for y in [24, 50, 78, 80, 86]:
     plt.axhline(y, lw = 2, c = 'k')
 
 fig.tight_layout()
@@ -163,7 +163,7 @@ fig.show()
 
 #%% Now plot the more agregated & set order manually
 fig, ax = plt.subplots(1,1, figsize = (7, 6), dpi=200)
-y_ordered = ['UNFSS & Governance', 'Agriculture', 'Food insecurity & Food system resilience',
+y_ordered = ['General & Governance', 'Agriculture', 'Food insecurity & Food system resilience',
              'Climate & Environment','Health & social issues', 'Other sectors', #'Junk'
              ]
 x_ordered = ["North America", "Europe & Central Asia", 
@@ -178,7 +178,7 @@ fig, ax = plot_heatmap(df, 'World Bank Region', 'topic_category',
 
 #%% Aggregated level - income
 fig, ax = plt.subplots(1,1, figsize = (7, 6), dpi=300)
-y_ordered = ['UNFSS & Governance', 'Agriculture', 'Food insecurity & Food system resilience',
+y_ordered = ['General & Governance', 'Agriculture', 'Food insecurity & Food system resilience',
              'Climate & Environment','Health & social issues', 'Other sectors', #'Junk'
              ]
 x_ordered = ['High', 'Upper-middle', 'Lower-middle', 'Low']
@@ -196,11 +196,11 @@ fig, ax = plot_heatmap(df, 'World Bank Income', 'topic_category',
 fig, ax = plt.subplots(1,1, figsize = (9, 14), dpi=300)
 
 #Ordering by hand is a bit of a pain, but easier than writing multi-level sort
-y_ordered = ['Dialogues', 'Food security strategy', 'Food system', 'Governance', 'Governance process', 'Government', 'SDGs', 'Spatial data', 'Timeline', 'UNFSS', 'UNFSS Action tracks', 
+y_ordered = ['Addressing food challenges', 'Dialogues', 'Food security strategy', 'Food system', 'Governance', 'Governance process', 'Government', 'Government action', 'SDGs', 'Spatial data', 'Timeline', 'UNFSS', 'UNFSS Action tracks', 
              'Agricultural development', 'Agricultural digitalization', 'Agricultural employment', 'Agricultural innovation', 'Agricultural market challenges', 'Agricultural production', 'Domestic production', 'International agricultural cooperation', 'Livestock breeding', 
-             'Civil protection', 'COVID-19', 'Economic vulnerabilities', 'Food system challenges', 'Food system development', 'Fortification', 'Humanitarian aid', 'Imports', 'Nutrition insecurity', 'Nutrition insecurity', 'Undernutrition', 
+             'Civil protection', 'COVID-19', 'Economic vulnerabilities', 'Food system challenges', 'Food system development', 'Fortification', 'Humanitarian aid', 'Imports', 'Undernutrition', 
              'Agri-environmental measures', 'Climate change', 'Climate impacts', 'Climate resilience', 'Environment', 'Waste management', 'Water management',
-             'AMR', 'Consumer protection', 'Consumption statistics', 'Finance and loans', 'Gender', 'Healthy nutrition', 'Obesity', 'Safety', 'School meals', 'SME', 
+             'Consumer protection', 'Consumption statistics', 'Finance and loans', 'Gender', 'Healthy nutrition', 'Obesity', 'One health', 'Safety', 'School meals', 'SME', 
              'Fisheries & Aquaculture', 'Research and education']
 
 x_ordered = ["North America", "Europe & Central Asia", 
@@ -214,16 +214,16 @@ fig, ax = plot_heatmap(df, 'World Bank Region', 'topic_name', y_sort = 'topic_ca
                        )
 
 #Add lines around the groups of topics
-for y in [11, 20, 30, 37, 47]:
+for y in [13, 22, 31, 38, 48]:
     plt.axhline(y, lw = 2, c = 'k')
 #And add them as text 
 #plt.subplots_adjust(left=0.5)
-plt.text(7.1, 5.5, "UNFSSS & Governance", va = 'center', rotation=270, weight='bold')
-plt.text(7.1, 15.5, "Agriculture", va = 'center', rotation=270, weight='bold')
-plt.text(7.1, 25, "Food Insecurity", va = 'center', rotation=270, weight='bold')
-plt.text(7.1, 33.5, "Environment", va = 'center', rotation=270, weight='bold')
-plt.text(7.1, 42, "Health & Social", va = 'center', rotation=270, weight='bold')
-plt.text(7.1, 48, "Other", va = 'center', rotation=270, weight='bold')
+plt.text(7.1, 6.5, "General & Governance", va = 'center', rotation=270, weight='bold')
+plt.text(7.1, 17.5, "Agriculture", va = 'center', rotation=270, weight='bold')
+plt.text(7.1, 26.5, "Food Insecurity", va = 'center', rotation=270, weight='bold')
+plt.text(7.1, 34.5, "Environment", va = 'center', rotation=270, weight='bold')
+plt.text(7.1, 43, "Health & Social", va = 'center', rotation=270, weight='bold')
+plt.text(7.1, 49, "Other", va = 'center', rotation=270, weight='bold')
    
 #fig.tight_layout()
 fig.show()
@@ -242,16 +242,16 @@ fig, ax = plot_heatmap(df, 'World Bank Income', 'topic_name', y_sort = 'topic_ca
 
 
 #Add lines around the groups of topics
-for y in [11, 20, 30, 37, 47]:
+for y in [13, 22, 31, 38, 48]:
     plt.axhline(y, lw = 2, c = 'k')
 #And add them as text 
 #plt.subplots_adjust(left=0.5)
-plt.text(4.1, 5.5, "UNFSSS & Governance", va = 'center', rotation=270, weight='bold')
-plt.text(4.1, 15.5, "Agriculture", va = 'center', rotation=270, weight='bold')
-plt.text(4.1, 25, "Food Insecurity", va = 'center', rotation=270, weight='bold')
-plt.text(4.1, 33.5, "Environment", va = 'center', rotation=270, weight='bold')
-plt.text(4.1, 42, "Health & Social", va = 'center', rotation=270, weight='bold')
-plt.text(4.1, 48, "Other", va = 'center', rotation=270, weight='bold')
+plt.text(4.1, 6.5, "General & Governance", va = 'center', rotation=270, weight='bold')
+plt.text(4.1, 17.5, "Agriculture", va = 'center', rotation=270, weight='bold')
+plt.text(4.1, 26.5, "Food Insecurity", va = 'center', rotation=270, weight='bold')
+plt.text(4.1, 34.5, "Environment", va = 'center', rotation=270, weight='bold')
+plt.text(4.1, 43, "Health & Social", va = 'center', rotation=270, weight='bold')
+plt.text(4.1, 49, "Other", va = 'center', rotation=270, weight='bold')
     
 fig.tight_layout()
 fig.show()
